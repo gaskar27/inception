@@ -1,0 +1,65 @@
+services:
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    depends_on:
+      - wordpress
+    ports:
+      - "443:443"
+    volumes:
+      - WordPress:/var/www/html:rw
+    networks:
+      - test
+    restart: on-failure
+
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    volumes:
+      - WordPress:/var/www/html:rw
+    depends_on:
+      - mariadb
+    networks:
+      - test
+    env_file:
+      - ./.env
+    restart: on-failure
+
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    volumes:
+      - DB:/var/lib/mysql
+    networks:
+      - test
+    env_file:
+      - ./.env
+    restart: on-failure
+
+volumes:
+  WordPress:
+    name: WordPress
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: bind
+      device: /home/${USER}/data/wordpress
+  DB:
+    name: DB
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: bind
+      device: /home/${USER}/data/DB
+
+networks:
+  test:
+    driver: bridge
+
+secrets:
+  credentials:
+    file: ../secrets/credentials.txt
+  db_password:
+    file: ../secrets/db_password.txt
+  db_root_password:
+    file: ../secrets/db_root_password.txt
