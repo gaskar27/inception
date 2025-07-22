@@ -1,15 +1,14 @@
 #!/bin/sh
 
-#until nc -z mariadb 3306; do
-#  echo "Waiting for database connection..."
-#  sleep 1
-#done
+SQL_USER=$(cat /run/secrets/credentials)
+SQL_PASSWORD=$(cat /run/secrets/db_password)
 
 echo "Waiting for MariaDB to be ready..."
 until mariadb -h mariadb -u "${SQL_USER}" -p"${SQL_PASSWORD}" -e "SELECT 1" >/dev/null 2>&1; do
     echo "Waiting for MariaDB... (will retry in 5 seconds)"
     sleep 5
 done
+
 echo "MariaDB is ready!"
 
 echo "Database is available. Starting WordPress setup."
@@ -18,7 +17,7 @@ if [ ! -f wp-config.php ]; then
     echo "Creating wp-config.php..."
     wp config create \
         --dbname=${SQL_DATABASE} \
-        --dbuser=${USER} \
+        --dbuser=${SQL_USER} \
         --dbpass=${SQL_PASSWORD} \
         --dbhost=mariadb:3306 \
         --allow-root

@@ -16,7 +16,7 @@ RUN  apk update && \
      php84-zip \
      php84-phar \
      wget \
-     mariadb-client shadow
+     shadow mariadb-client
 
 RUN deluser www-data || true && \
     delgroup www-data || true && \

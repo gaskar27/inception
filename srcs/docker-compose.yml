@@ -9,7 +9,7 @@ services:
     volumes:
       - WordPress:/var/www/html:rw
     networks:
-      - test
+      - net
     restart: on-failure
 
   wordpress:
@@ -20,9 +20,12 @@ services:
     depends_on:
       - mariadb
     networks:
-      - test
+      - net
     env_file:
       - ./.env
+    secrets:
+      - credentials
+      - db_password
     restart: on-failure
 
   mariadb:
@@ -31,9 +34,13 @@ services:
     volumes:
       - DB:/var/lib/mysql
     networks:
-      - test
+      - net
     env_file:
       - ./.env
+    secrets:
+      - db_password
+      - db_root_password
+      - credentials
     restart: on-failure
 
 volumes:
@@ -53,7 +60,7 @@ volumes:
       device: /home/${USER}/data/DB
 
 networks:
-  test:
+  net:
     driver: bridge
 
 secrets:

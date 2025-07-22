@@ -1,53 +1,53 @@
 NAME = inception
 FILE = ./srcs/docker-compose.yml
-DC = docker compose
-C = $(DC) -f $(FILE) --project-name $(NAME)
+DC = docker compose -f $(FILE) --project-name $(NAME)
 VOLUME = WordPress DB
 MKDIR = mkdir -p
 RMDIR = rm -fr
 
-define check_env
-	@echo "Vérification de l'existence de '$1'..." ; \
-	if [ ! -f "$1" ]; then \
-		echo "'$1' n'existe pas. Exécution de '$2'..." ; \
+define check
+	@echo "Check '$1'..." ; \
+	if [ ! -f "$1" ] && [ ! -d "$1" ]; then \
+		echo "'$1' doesn't exist. Executing '$2'..." ; \
 		$2 ; \
 	else \
-		echo "'$1' existe déjà. Pas besoin d'exécuter le script." ; \
+		echo "'$1' already exist." ; \
 	fi
 endef
 
-all: haha
+all: haha up
 
 dir:
 	@$(MKDIR) /home/${USER}/data/wordpress
 	@$(MKDIR) /home/${USER}/data/DB
 
 haha:
-	$(call check_env,./srcs/.env,./srcs/requirements/tools/generate_env.sh)
+	@$(call check,./srcs/.env,./srcs/requirements/tools/generate_env.sh)
+	@$(call check,./secrets,./srcs/requirements/tools/generate_secrets.sh)
 
 up: dir
-	$(C) up --build -d
+	$(DC) up --build -d
 
 status:
-	$(C) ps
+	$(DC) ps
 
 maria:
-	$(C) logs mariadb
+	$(DC) logs mariadb
 
 word:
-	$(C) logs wordpress
+	$(DC) logs wordpress
 
 nginx:
-	$(C) logs nginx
+	$(DC) logs nginx
 
 start:
-	$(C) start
+	$(DC) start
 
 stop:
-	$(C) stop
+	$(DC) stop
 
 down:
-	$(C) down --rmi all --remove-orphans -v
+	$(DC) down --rmi all --remove-orphans -v
 
 clean: down
 
