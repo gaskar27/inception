@@ -33,7 +33,7 @@ haha:
 	@$(call check,./secrets,./srcs/requirements/tools/generate_secrets.sh)
 
 up: dir
-	$(DC) up --build -d
+	$(DC) up -d
 
 status:
 	$(DC) ps
@@ -54,7 +54,7 @@ stop:
 	$(DC) stop
 
 down:
-	$(DC) down --rmi all --remove-orphans -v
+	$(DC) down --remove-orphans -v
 
 clean: down
 
