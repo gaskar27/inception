@@ -25,7 +25,7 @@ To set up and run the infrastructure, follow these steps:
 
 1.  **Clone the repository**:
     ```bash
-    git clone <repository_url>
+    git clone https://github.com/gaskar27/inception.git
     cd inception
     ```
 
